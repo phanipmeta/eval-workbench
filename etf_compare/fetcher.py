@@ -12,7 +12,7 @@ def fetch_etf_info(ticker: str) -> dict:
     return {
         "ticker": ticker.upper(),
         "name": info.get("longName") or info.get("shortName", "N/A"),
-        "expense_ratio": info.get("annualReportExpenseRatio"),
+        "expense_ratio": info.get("netExpenseRatio"),
         "category": info.get("category", "N/A"),
         "total_assets": info.get("totalAssets"),
         "ytd_return": info.get("ytdReturn"),

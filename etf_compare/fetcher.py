@@ -9,6 +9,16 @@ def fetch_etf_info(ticker: str) -> dict:
     etf = yf.Ticker(ticker)
     info = etf.info
 
+    # Validate ticker exists - info dict will be empty or missing key fields for invalid tickers
+    if not info or (
+        not info.get("longName")
+        and not info.get("shortName")
+        and not info.get("symbol")
+    ):
+        raise ValueError(
+            f"Ticker '{ticker.upper()}' not found. Please check the symbol and try again."
+        )
+
     # Note: ytdReturn and netExpenseRatio from yfinance are already percentages
     # (e.g., -4.34 for -4.34%, 0.03 for 0.03%), but other returns are decimals
     # (e.g., 0.1228 for 12.28%). Normalize to decimals for consistency.

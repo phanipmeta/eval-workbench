@@ -9,13 +9,24 @@ def fetch_etf_info(ticker: str) -> dict:
     etf = yf.Ticker(ticker)
     info = etf.info
 
+    # Note: ytdReturn and netExpenseRatio from yfinance are already percentages
+    # (e.g., -4.34 for -4.34%, 0.03 for 0.03%), but other returns are decimals
+    # (e.g., 0.1228 for 12.28%). Normalize to decimals for consistency.
+    ytd = info.get("ytdReturn")
+    if ytd is not None:
+        ytd = ytd / 100
+
+    expense = info.get("netExpenseRatio")
+    if expense is not None:
+        expense = expense / 100
+
     return {
         "ticker": ticker.upper(),
         "name": info.get("longName") or info.get("shortName", "N/A"),
-        "expense_ratio": info.get("netExpenseRatio"),
+        "expense_ratio": expense,
         "category": info.get("category", "N/A"),
         "total_assets": info.get("totalAssets"),
-        "ytd_return": info.get("ytdReturn"),
+        "ytd_return": ytd,
         "three_year_return": info.get("threeYearAverageReturn"),
         "five_year_return": info.get("fiveYearAverageReturn"),
         "dividend_yield": info.get("yield"),
